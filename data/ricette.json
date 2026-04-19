@@ -5,18 +5,16 @@
             "ghiaccio": 1
         }
     },
-    "panino": {
+    "AMARBOMB": {
         "ingredienti": {
-            "pane": 2,
-            "prosciutto": 1,
-            "formaggio": 1
+            "energy_drink": 2,
+            "amaro": 2
         }
     },
-    "insalata": {
+    "COCKTAIL STELLATO": {
         "ingredienti": {
-            "lattuga": 100,
-            "olio": 10,
-            "sale": 1
+            "limonata": 1,
+            "rum": 1
         }
     }
 }
