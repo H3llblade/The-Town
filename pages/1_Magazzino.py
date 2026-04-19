@@ -5,7 +5,7 @@ import os
 FILE = "data/magazzino.json"
 
 # -------------------------
-# FUNZIONI SICURE
+# FUNZIONI
 # -------------------------
 
 def load_data():
@@ -25,6 +25,7 @@ def load_data():
         return {}
 
 def save_data(data):
+    os.makedirs("data", exist_ok=True)
     with open(FILE, "w") as f:
         json.dump(data, f, indent=4)
 
@@ -37,12 +38,12 @@ st.title("📦 Magazzino")
 data = load_data()
 
 # -------------------------
-# AGGIUNTA INGREDIENTE
+# INPUT
 # -------------------------
 
-st.subheader("➕ Aggiungi / Aggiorna")
+st.subheader("➕ Aggiungi / Aggiorna Ingrediente")
 
-col1, col2 = st.columns(2)
+col1, col2, col3 = st.columns(3)
 
 with col1:
     nome = st.text_input("Ingrediente")
@@ -50,25 +51,49 @@ with col1:
 with col2:
     quantita = st.number_input("Quantità", min_value=0.0, step=1.0)
 
+with col3:
+    unita = st.selectbox("Unità", ["pz", "kg", "litri"])
+
+# -------------------------
+# SALVATAGGIO CORRETTO
+# -------------------------
+
 if st.button("Salva"):
     if nome:
         nome = nome.lower().strip()
-        data[nome] = quantita
+
+        if nome in data:
+            data[nome]["quantita"] = quantita
+            data[nome]["unita"] = unita
+        else:
+            data[nome] = {
+                "quantita": quantita,
+                "unita": unita
+            }
+
         save_data(data)
+
         st.success("Salvato correttamente!")
+
+        # DEBUG (importantissimo)
+        st.write("DEBUG DATI SALVATI:", data)
+
         st.rerun()
 
 # -------------------------
 # VISUALIZZAZIONE A RIQUADRI
 # -------------------------
 
-st.subheader("📊 Stock")
+st.subheader("📊 Stock attuale")
 
 if data:
     cols = st.columns(4)
 
-    for i, (ingrediente, qta) in enumerate(data.items()):
+    for i, (ingrediente, info) in enumerate(data.items()):
         with cols[i % 4]:
+
+            qta = info["quantita"]
+            unita = info["unita"]
 
             colore = "#16a34a" if qta > 5 else "#dc2626"
 
@@ -95,6 +120,12 @@ if data:
                         margin-top: 10px;
                     ">
                         {qta}
+                    </div>
+                    <div style="
+                        font-size: 12px;
+                        color: #9ca3af;
+                    ">
+                        {unita}
                     </div>
                 </div>
             """, unsafe_allow_html=True)
