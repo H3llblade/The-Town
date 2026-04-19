@@ -26,7 +26,7 @@ magazzino = load_json(MAGAZZINO_FILE)
 ricette = load_json(RICETTE_FILE)
 
 # -------------------------
-# CALCOLO
+# CALCOLO PIATTI
 # -------------------------
 
 def calcola_piatti(ingredienti, magazzino):
@@ -51,34 +51,39 @@ if ricette:
 
         st.markdown(f"## 📂 {categoria}")
 
-        cols = st.columns(2)
+        # lista ricette della categoria
+        items = list(lista_ricette.items())
 
-        i = 0
+        # 🔥 GRIGLIA DA 4
+        for i in range(0, len(items), 4):
 
-        for nome, info in lista_ricette.items():
+            cols = st.columns(4)
 
-            ingredienti = info.get("ingredienti", {})
-            max_piatti = calcola_piatti(ingredienti, magazzino)
+            for j in range(4):
 
-            with cols[i % 2]:
+                if i + j < len(items):
 
-                # 🔥 CARD PULITA STREAMLIT
-                with st.container(border=True):
+                    nome, info = items[i + j]
+                    ingredienti = info.get("ingredienti", {})
 
-                    st.markdown(f"### 🍽️ {nome}")
+                    max_piatti = calcola_piatti(ingredienti, magazzino)
 
-                    if max_piatti > 0:
-                        st.success(f"✔ Cucine disponibili: {max_piatti}")
-                    else:
-                        st.error("✖ Non cucinabile")
+                    with cols[j]:
 
-                    st.markdown("**Ingredienti:**")
+                        with st.container(border=True):
 
-                    for ing, qty in ingredienti.items():
-                        disponibili = magazzino.get(ing, 0)
-                        st.write(f"- {ing}: {qty} (disp. {disponibili})")
+                            st.markdown(f"### 🍽️ {nome}")
 
-            i += 1
+                            if max_piatti > 0:
+                                st.success(f"✔ {max_piatti} piatti")
+                            else:
+                                st.error("✖ non cucinabile")
+
+                            st.markdown("**Ingredienti:**")
+
+                            for ing, qty in ingredienti.items():
+                                disp = magazzino.get(ing, 0)
+                                st.write(f"- {ing}: {qty} (disp {disp})")
 
         st.markdown("---")
 
