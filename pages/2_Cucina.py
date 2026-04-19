@@ -51,7 +51,7 @@ if ricette:
 
         st.markdown(f"## 📂 {categoria}")
 
-        cols = st.columns(2)  # 🔥 layout a griglia
+        cols = st.columns(2)
 
         i = 0
 
@@ -62,32 +62,21 @@ if ricette:
 
             with cols[i % 2]:
 
-                # ---------------- CARD ----------------
-                st.markdown(
-                    f"""
-                    <div style="
-                        border: 1px solid #ddd;
-                        border-radius: 12px;
-                        padding: 12px;
-                        margin-bottom: 10px;
-                        background-color: #fafafa;
-                        height: 180px;
-                    ">
-                        <h4 style="margin-bottom:5px;">🍽️ {nome}</h4>
-                        <p><b>Produzione:</b> {max_piatti} piatti</p>
-                        <p style="font-size:12px;">
-                    """,
-                    unsafe_allow_html=True
-                )
+                # 🔥 CARD PULITA STREAMLIT
+                with st.container(border=True):
 
-                # ingredienti compatti
-                ing_text = ""
-                for ing, qty in ingredienti.items():
-                    ing_text += f"{ing} ({qty}) • "
+                    st.markdown(f"### 🍽️ {nome}")
 
-                st.markdown(ing_text[:-3], unsafe_allow_html=True)
+                    if max_piatti > 0:
+                        st.success(f"✔ Cucine disponibili: {max_piatti}")
+                    else:
+                        st.error("✖ Non cucinabile")
 
-                st.markdown("</p></div>", unsafe_allow_html=True)
+                    st.markdown("**Ingredienti:**")
+
+                    for ing, qty in ingredienti.items():
+                        disponibili = magazzino.get(ing, 0)
+                        st.write(f"- {ing}: {qty} (disp. {disponibili})")
 
             i += 1
 
