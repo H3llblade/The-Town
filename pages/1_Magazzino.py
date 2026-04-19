@@ -2,7 +2,8 @@ import streamlit as st
 import json
 import os
 
-FILE = "data/magazzino.json"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+FILE = os.path.join(BASE_DIR, "data", "magazzino.json")
 
 # -------------------------
 # LOAD / SAVE SICURI
