@@ -1,9 +1,8 @@
 {
     "SPRITZ": {
         "ingredienti": {
-            "pasta": 1,
-            "pomodoro": 5,
-            "sale": 1
+            "mix_di_aperitivi": 1,
+            "ghiaccio": 1
         }
     },
     "panino": {
