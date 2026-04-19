@@ -9,8 +9,9 @@ FILE = "data/magazzino.json"
 # -------------------------
 
 def load_data():
+    os.makedirs("data", exist_ok=True)
+
     if not os.path.exists(FILE):
-        os.makedirs("data", exist_ok=True)
         with open(FILE, "w") as f:
             json.dump({}, f)
         return {}
@@ -41,47 +42,34 @@ data = load_data()
 # INPUT
 # -------------------------
 
-st.subheader("➕ Aggiungi / Aggiorna Ingrediente")
+st.subheader("➕ Aggiungi / Aggiorna ingrediente")
 
-col1, col2, col3 = st.columns(3)
+col1, col2 = st.columns(2)
 
 with col1:
-    nome = st.text_input("Ingrediente")
+    nome = st.text_input("Nome prodotto")
 
 with col2:
     quantita = st.number_input("Quantità", min_value=0.0, step=1.0)
 
-with col3:
-    unita = st.selectbox("Unità", ["pz", "kg", "litri"])
-
 # -------------------------
-# SALVATAGGIO CORRETTO
+# SALVATAGGIO
 # -------------------------
 
 if st.button("Salva"):
     if nome:
         nome = nome.lower().strip()
 
-        if nome in data:
-            data[nome]["quantita"] = quantita
-            data[nome]["unita"] = unita
-        else:
-            data[nome] = {
-                "quantita": quantita,
-                "unita": unita
-            }
+        # struttura semplice: "prodotto": quantità
+        data[nome] = quantita
 
         save_data(data)
 
         st.success("Salvato correttamente!")
-
-        # DEBUG (importantissimo)
-        st.write("DEBUG DATI SALVATI:", data)
-
         st.rerun()
 
 # -------------------------
-# VISUALIZZAZIONE A RIQUADRI
+# VISUALIZZAZIONE STOCK
 # -------------------------
 
 st.subheader("📊 Stock attuale")
@@ -89,11 +77,8 @@ st.subheader("📊 Stock attuale")
 if data:
     cols = st.columns(4)
 
-    for i, (ingrediente, info) in enumerate(data.items()):
+    for i, (prodotto, qta) in enumerate(data.items()):
         with cols[i % 4]:
-
-            qta = info["quantita"]
-            unita = info["unita"]
 
             colore = "#16a34a" if qta > 5 else "#dc2626"
 
@@ -111,8 +96,9 @@ if data:
                         color: #9ca3af;
                         letter-spacing: 2px;
                     ">
-                        {ingrediente.upper()}
+                        {prodotto.upper()}
                     </div>
+
                     <div style="
                         font-size: 40px;
                         font-weight: bold;
@@ -120,12 +106,6 @@ if data:
                         margin-top: 10px;
                     ">
                         {qta}
-                    </div>
-                    <div style="
-                        font-size: 12px;
-                        color: #9ca3af;
-                    ">
-                        {unita}
                     </div>
                 </div>
             """, unsafe_allow_html=True)
