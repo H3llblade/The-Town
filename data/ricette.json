@@ -16,5 +16,25 @@
             "limonata": 1,
             "rum": 1
         }
-    }
+    },
+    "LATTE DI COGNATA": {
+        "ingredienti": {
+            "vodka": 2,
+            "amaro": 2,
+            "ghiaccio": 1
+        }
+    },
+    "SPACCA CERVELLI": {
+        "ingredienti": {
+            "vodka": 1,
+            "rum": 1,
+            "ghiaccio": 1
+        }
+    },
+    "SKREWDRIVER": {
+        "ingredienti": {
+            "vodka": 2,
+            "ghiaccio": 1
+        }
+    },
 }
