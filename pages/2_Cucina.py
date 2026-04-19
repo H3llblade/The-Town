@@ -49,8 +49,6 @@ def calcola_piatti(ingredienti, magazzino):
 
 st.title("🍳 Cucina")
 
-st.subheader("📊 Piatti producibili per categoria")
-
 # -------------------------
 # LOGICA
 # -------------------------
