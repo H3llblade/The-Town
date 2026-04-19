@@ -14,7 +14,6 @@ def load_data():
 ricette = load_data()
 
 st.title("📘 Ricettario")
-st.subheader("📊 Ricette presenti")
 
 if ricette:
 
