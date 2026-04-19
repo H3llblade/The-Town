@@ -57,4 +57,46 @@
             "ghiaccio": 1
         }
     },
+    "TORTA ALLE MELE": {
+        "ingredienti": {
+            "farina": 1,
+            "mela": 1,
+            "zucchero": 1
+        }
+    },
+    "TIRAMISU": {
+        "ingredienti": {
+            "savoiardi": 1,
+            "mascarpone": 1,
+            "caffè": 1,
+            "uovo": 1
+        }
+    },
+    "TORTA GELATO": {
+        "ingredienti": {
+            "farina": 1,
+            "gelato": 1
+        }
+    },
+    "CANNOLO SICILIANO": {
+        "ingredienti": {
+            "cannolo": 1,
+            "ricotta": 1,
+            "zucchero": 1
+        }
+    },
+    "MERINGATA": {
+        "ingredienti": {
+            "meringa": 1,
+            "crema": 1,
+            "zucchero": 1
+        }
+    },
+    "DESSERT STELLATO": {
+        "ingredienti": {
+            "gelato": 1,
+            "meringa": 1,
+            "mascarpone": 1
+        }
+    },
 }
