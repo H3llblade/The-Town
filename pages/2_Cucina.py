@@ -13,7 +13,7 @@ MAGAZZINO_FILE = os.path.join(DATA_DIR, "magazzino.json")
 RICETTE_FILE = os.path.join(DATA_DIR, "ricette.json")
 
 # -------------------------
-# LOAD JSON
+# LOAD
 # -------------------------
 
 def load_json(file):
@@ -26,22 +26,18 @@ magazzino = load_json(MAGAZZINO_FILE)
 ricette = load_json(RICETTE_FILE)
 
 # -------------------------
-# CALCOLO PIATTI
+# CALCOLO
 # -------------------------
 
 def calcola_piatti(ingredienti, magazzino):
-    risultati = []
+    valori = []
 
-    for ing, qty_richiesta in ingredienti.items():
-
-        disponibili = magazzino.get(ing, 0)
-
-        if disponibili == 0:
+    for ing, qty in ingredienti.items():
+        if ing not in magazzino:
             return 0
+        valori.append(magazzino[ing] // qty)
 
-        risultati.append(disponibili // qty_richiesta)
-
-    return int(min(risultati)) if risultati else 0
+    return int(min(valori)) if valori else 0
 
 # -------------------------
 # UI
@@ -49,38 +45,53 @@ def calcola_piatti(ingredienti, magazzino):
 
 st.title("🍳 Cucina")
 
-# -------------------------
-# LOGICA
-# -------------------------
-
 if ricette:
 
     for categoria, lista_ricette in ricette.items():
 
         st.markdown(f"## 📂 {categoria}")
 
+        cols = st.columns(2)  # 🔥 layout a griglia
+
+        i = 0
+
         for nome, info in lista_ricette.items():
 
             ingredienti = info.get("ingredienti", {})
-
             max_piatti = calcola_piatti(ingredienti, magazzino)
 
-            st.markdown(f"### 🍽️ {nome}")
+            with cols[i % 2]:
 
-            if max_piatti > 0:
-                st.success(f"Puoi cucinare: {max_piatti} piatti")
-            else:
-                st.error("Non puoi cucinare questa ricetta")
+                # ---------------- CARD ----------------
+                st.markdown(
+                    f"""
+                    <div style="
+                        border: 1px solid #ddd;
+                        border-radius: 12px;
+                        padding: 12px;
+                        margin-bottom: 10px;
+                        background-color: #fafafa;
+                        height: 180px;
+                    ">
+                        <h4 style="margin-bottom:5px;">🍽️ {nome}</h4>
+                        <p><b>Produzione:</b> {max_piatti} piatti</p>
+                        <p style="font-size:12px;">
+                    """,
+                    unsafe_allow_html=True
+                )
 
-            st.write("Ingredienti:")
+                # ingredienti compatti
+                ing_text = ""
+                for ing, qty in ingredienti.items():
+                    ing_text += f"{ing} ({qty}) • "
 
-            for ing, qty in ingredienti.items():
+                st.markdown(ing_text[:-3], unsafe_allow_html=True)
 
-                disponibili = magazzino.get(ing, 0)
+                st.markdown("</p></div>", unsafe_allow_html=True)
 
-                st.write(f"- {ing}: richiesti {qty} | disponibili {disponibili}")
+            i += 1
 
-            st.markdown("---")
+        st.markdown("---")
 
 else:
     st.info("Nessuna ricetta disponibile")
