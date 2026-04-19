@@ -1,9 +1,11 @@
 {
+    "ALCOLICI"{
     "SPRITZ": {
         "ingredienti": {
             "mix_di_aperitivi": 1,
             "ghiaccio": 1
         }
+    }
     },
     "AMARBOMB": {
         "ingredienti": {
