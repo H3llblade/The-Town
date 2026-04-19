@@ -3,19 +3,18 @@ import json
 import os
 
 # -------------------------
-# PATH SICURO
+# ROOT PROGETTO (NON /pages)
 # -------------------------
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 DATA_DIR = os.path.join(BASE_DIR, "data")
 FILE = os.path.join(DATA_DIR, "magazzino.json")
 
 # -------------------------
-# LOAD / SAVE SICURO
+# LOAD / SAVE
 # -------------------------
 
 def load_data():
-    # 🔥 CREA SEMPRE LA CARTELLA PRIMA
     os.makedirs(DATA_DIR, exist_ok=True)
 
     if not os.path.exists(FILE):
@@ -33,11 +32,16 @@ def load_data():
         return {}
 
 def save_data(data):
-    # 🔥 SICUREZZA CARTELLA
     os.makedirs(DATA_DIR, exist_ok=True)
 
     with open(FILE, "w") as f:
         json.dump(data, f, indent=4)
+
+# -------------------------
+# DEBUG PATH (IMPORTANTISSIMO)
+# -------------------------
+
+st.write("📁 FILE LETTO:", FILE)
 
 # -------------------------
 # CARICA DATI
@@ -74,7 +78,7 @@ if st.button("Aggiungi / Aggiorna"):
 
         save_data(data)
 
-        st.success("Salvato nel file JSON")
+        st.success("Salvato correttamente")
         st.rerun()
 
 # -------------------------
@@ -89,4 +93,4 @@ if data:
     for k, v in data.items():
         st.write(f"{k} → {v}")
 else:
-    st.info("Magazzino vuoto")
+    st.warning("Magazzino vuoto")
