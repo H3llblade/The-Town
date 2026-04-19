@@ -60,7 +60,6 @@ if st.button("Salva"):
     if nome:
         nome = nome.lower().strip()
 
-        # struttura semplice: "prodotto": quantità
         data[nome] = quantita
 
         save_data(data)
@@ -69,7 +68,7 @@ if st.button("Salva"):
         st.rerun()
 
 # -------------------------
-# VISUALIZZAZIONE STOCK
+# VISUALIZZAZIONE STOCK (CARD CORRETTE)
 # -------------------------
 
 st.subheader("📊 Stock attuale")
@@ -82,33 +81,33 @@ if data:
 
             colore = "#16a34a" if qta > 5 else "#dc2626"
 
-           st.markdown(f"""
-<div style="
-    border-radius: 15px;
-    padding: 20px;
-    background-color: #1f2937;
-    text-align: center;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    margin-bottom: 15px;
-">
-    <div style="
-        font-size: 14px;
-        color: #9ca3af;
-        letter-spacing: 2px;
-    ">
-        {prodotto.upper()}
-    </div>
+            st.markdown(f"""
+                <div style="
+                    border-radius: 15px;
+                    padding: 20px;
+                    background-color: #1f2937;
+                    text-align: center;
+                    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+                    margin-bottom: 15px;
+                ">
+                    <div style="
+                        font-size: 14px;
+                        color: #9ca3af;
+                        letter-spacing: 2px;
+                    ">
+                        {prodotto.upper()}
+                    </div>
 
-    <div style="
-        font-size: 40px;
-        font-weight: bold;
-        color: #16a34a;
-        margin-top: 10px;
-    ">
-        {qta}
-    </div>
-</div>
-""", unsafe_allow_html=True)
+                    <div style="
+                        font-size: 40px;
+                        font-weight: bold;
+                        color: {colore};
+                        margin-top: 10px;
+                    ">
+                        {qta}
+                    </div>
+                </div>
+            """, unsafe_allow_html=True)
 
 else:
     st.info("Magazzino vuoto")
