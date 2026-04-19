@@ -2,15 +2,21 @@ import streamlit as st
 import json
 import os
 
+# -------------------------
+# PATH SICURO
+# -------------------------
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-FILE = os.path.join(BASE_DIR, "data", "magazzino.json")
+DATA_DIR = os.path.join(BASE_DIR, "data")
+FILE = os.path.join(DATA_DIR, "magazzino.json")
 
 # -------------------------
-# LOAD / SAVE SICURI
+# LOAD / SAVE SICURO
 # -------------------------
 
 def load_data():
-    os.makedirs("data", exist_ok=True)
+    # 🔥 CREA SEMPRE LA CARTELLA PRIMA
+    os.makedirs(DATA_DIR, exist_ok=True)
 
     if not os.path.exists(FILE):
         with open(FILE, "w") as f:
@@ -27,12 +33,14 @@ def load_data():
         return {}
 
 def save_data(data):
-    os.makedirs("data", exist_ok=True)
+    # 🔥 SICUREZZA CARTELLA
+    os.makedirs(DATA_DIR, exist_ok=True)
+
     with open(FILE, "w") as f:
         json.dump(data, f, indent=4)
 
 # -------------------------
-# CARICA SEMPRE DAL FILE
+# CARICA DATI
 # -------------------------
 
 data = load_data()
@@ -43,25 +51,22 @@ data = load_data()
 
 st.title("📦 Magazzino")
 
-st.subheader("➕ Aggiungi prodotto")
-
 col1, col2 = st.columns(2)
 
 with col1:
-    nome = st.text_input("Nome prodotto")
+    nome = st.text_input("Prodotto")
 
 with col2:
     quantita = st.number_input("Quantità", min_value=0.0, step=1.0)
 
 # -------------------------
-# AGGIORNAMENTO FILE
+# SALVATAGGIO
 # -------------------------
 
 if st.button("Aggiungi / Aggiorna"):
     if nome:
         nome = nome.lower().strip()
 
-        # se esiste lo somma, altrimenti crea
         if nome in data:
             data[nome] += quantita
         else:
@@ -69,20 +74,19 @@ if st.button("Aggiungi / Aggiorna"):
 
         save_data(data)
 
-        st.success(f"{nome} aggiornato nel magazzino")
-
+        st.success("Salvato nel file JSON")
         st.rerun()
 
 # -------------------------
 # VISUALIZZAZIONE
 # -------------------------
 
-st.subheader("📊 Stock attuale (da file JSON)")
+st.subheader("📊 Magazzino")
 
-data = load_data()  # 🔥 ricarica sempre dal file
+data = load_data()
 
 if data:
-    for prodotto, qta in data.items():
-        st.write(f"{prodotto} → {qta}")
+    for k, v in data.items():
+        st.write(f"{k} → {v}")
 else:
     st.info("Magazzino vuoto")
