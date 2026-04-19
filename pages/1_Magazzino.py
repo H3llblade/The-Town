@@ -3,7 +3,7 @@ import json
 import os
 
 # -------------------------
-# ROOT PROGETTO (NON /pages)
+# PERCORSO REALE FILE
 # -------------------------
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -22,14 +22,11 @@ def load_data():
             json.dump({}, f)
         return {}
 
-    try:
-        with open(FILE, "r") as f:
-            content = f.read().strip()
-            if not content:
-                return {}
-            return json.loads(content)
-    except:
-        return {}
+    with open(FILE, "r") as f:
+        content = f.read().strip()
+        if not content:
+            return {}
+        return json.loads(content)
 
 def save_data(data):
     os.makedirs(DATA_DIR, exist_ok=True)
@@ -38,13 +35,7 @@ def save_data(data):
         json.dump(data, f, indent=4)
 
 # -------------------------
-# DEBUG PATH (IMPORTANTISSIMO)
-# -------------------------
-
-st.write("📁 FILE LETTO:", FILE)
-
-# -------------------------
-# CARICA DATI
+# CARICA INVENTARIO
 # -------------------------
 
 data = load_data()
@@ -64,11 +55,12 @@ with col2:
     quantita = st.number_input("Quantità", min_value=0.0, step=1.0)
 
 # -------------------------
-# SALVATAGGIO
+# AGGIUNTA / UPDATE
 # -------------------------
 
 if st.button("Aggiungi / Aggiorna"):
-    if nome:
+    if nome and quantita is not None:
+
         nome = nome.lower().strip()
 
         if nome in data:
@@ -78,25 +70,19 @@ if st.button("Aggiungi / Aggiorna"):
 
         save_data(data)
 
-        st.success("Salvato correttamente")
+        st.success(f"Salvato: {nome} → {data[nome]}")
         st.rerun()
 
 # -------------------------
-# VISUALIZZAZIONE
+# VISUALIZZAZIONE INVENTARIO
 # -------------------------
 
-st.subheader("📊 Magazzino")
+st.subheader("📊 Inventario")
 
 data = load_data()
 
 if data:
-    for k, v in data.items():
-        st.write(f"{k} → {v}")
+    for prodotto, qty in data.items():
+        st.write(f"{prodotto} → {qty}")
 else:
-    st.warning("Magazzino vuoto")
-
-if st.button("TEST SCRITTURA"):
-    with open(FILE, "w") as f:
-        f.write('{"test": 123}')
-
-    st.success("Scritto file manualmente")
+    st.info("Magazzino vuoto")
