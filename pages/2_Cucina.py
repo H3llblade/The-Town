@@ -3,14 +3,10 @@ import json
 import os
 
 # -------------------------
-# CONFIG PAGINA (FULL WIDTH)
+# CONFIG
 # -------------------------
 
 st.set_page_config(layout="wide")
-
-# -------------------------
-# PATH
-# -------------------------
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 DATA_DIR = os.path.join(BASE_DIR, "data")
@@ -46,63 +42,120 @@ def calcola_piatti(ingredienti, magazzino):
     return int(min(valori)) if valori else 0
 
 # -------------------------
+# SIDEBAR FILTRI
+# -------------------------
+
+st.sidebar.title("🔧 Filtri")
+
+solo_cucinabili = st.sidebar.checkbox("✔ Solo cucinabili")
+categoria_filtro = st.sidebar.selectbox(
+    "📂 Categoria",
+    ["TUTTE"] + list(ricette.keys()) if ricette else ["TUTTE"]
+)
+
+ordina = st.sidebar.selectbox(
+    "📊 Ordina per",
+    ["Più cucinabili", "Nome"]
+)
+
+# -------------------------
 # UI
 # -------------------------
 
-st.title("🍳 Cucina")
+st.title("🍳 Dashboard Cucina Ristorante")
 
-CARD_STYLE = """
-<div style="
-    border: 1px solid #ddd;
-    border-radius: 12px;
-    padding: 12px;
-    height: 220px;
-    overflow: hidden;
-">
-"""
+# -------------------------
+# RACCOLTA DATI PIATTI
+# -------------------------
 
-if ricette:
+piatti = []
 
-    for categoria, lista_ricette in ricette.items():
+for categoria, lista_ricette in ricette.items():
 
-        st.markdown(f"## 📂 {categoria}")
+    if categoria_filtro != "TUTTE" and categoria != categoria_filtro:
+        continue
 
-        items = list(lista_ricette.items())
+    for nome, info in lista_ricette.items():
 
-        for i in range(0, len(items), 4):
+        ingredienti = info.get("ingredienti", {})
+        max_piatti = calcola_piatti(ingredienti, magazzino)
 
-            cols = st.columns(4)
+        piatti.append({
+            "categoria": categoria,
+            "nome": nome,
+            "ingredienti": ingredienti,
+            "max": max_piatti
+        })
 
-            for j in range(4):
+# -------------------------
+# ORDINAMENTO
+# -------------------------
 
-                if i + j < len(items):
-
-                    nome, info = items[i + j]
-                    ingredienti = info.get("ingredienti", {})
-
-                    max_piatti = calcola_piatti(ingredienti, magazzino)
-
-                    with cols[j]:
-
-                        # ---------------- CARD FIXED ----------------
-                        st.markdown(CARD_STYLE, unsafe_allow_html=True)
-
-                        st.markdown(f"### 🍽️ {nome}")
-
-                        if max_piatti > 0:
-                            st.success(f"✔ {max_piatti} piatti cucinabili")
-                        else:
-                            st.error("✖ Non cucinabile")
-
-                        st.markdown("**Ingredienti:**")
-
-                        for ing, qty in ingredienti.items():
-                            disp = magazzino.get(ing, 0)
-                            st.write(f"{ing}: {qty} (disp {disp})")
-
-                        st.markdown("</div>", unsafe_allow_html=True)
-
-        st.markdown("---")
-
+if ordina == "Più cucinabili":
+    piatti.sort(key=lambda x: x["max"], reverse=True)
 else:
-    st.info("Nessuna ricetta disponibile")
+    piatti.sort(key=lambda x: x["nome"])
+
+# -------------------------
+# FILTRO CUCINABILI
+# -------------------------
+
+if solo_cucinabili:
+    piatti = [p for p in piatti if p["max"] > 0]
+
+# -------------------------
+# DISPLAY GRID
+# -------------------------
+
+cols_per_row = 4
+
+for i in range(0, len(piatti), cols_per_row):
+
+    cols = st.columns(cols_per_row)
+
+    for j in range(cols_per_row):
+
+        if i + j < len(piatti):
+
+            p = piatti[i + j]
+
+            nome = p["nome"]
+            categoria = p["categoria"]
+            ingredienti = p["ingredienti"]
+            max_piatti = p["max"]
+
+            with cols[j]:
+
+                # ---------------- CARD ----------------
+                st.markdown(
+                    f"""
+                    <div style="
+                        border: 1px solid #ddd;
+                        border-radius: 12px;
+                        padding: 12px;
+                        height: 240px;
+                        overflow: hidden;
+                        background: white;
+                    ">
+                    """,
+                    unsafe_allow_html=True
+                )
+
+                st.markdown(f"### 🍽️ {nome}")
+                st.caption(f"📂 {categoria}")
+
+                # STATUS COLORATO
+                if max_piatti > 5:
+                    st.success(f"✔ {max_piatti} piatti")
+                elif max_piatti > 0:
+                    st.warning(f"⚠ {max_piatti} piatti")
+                else:
+                    st.error("✖ non cucinabile")
+
+                st.markdown("**Ingredienti:**")
+
+                for ing, qty in ingredienti.items():
+                    disp = magazzino.get(ing, 0)
+                    st.write(f"- {ing}: {qty} (disp {disp})")
+
+                st.markdown("</div>", unsafe_allow_html=True)
