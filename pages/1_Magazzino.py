@@ -5,7 +5,7 @@ import os
 FILE = "data/magazzino.json"
 
 # -------------------------
-# FUNZIONI SICURE
+# FUNZIONI
 # -------------------------
 
 def load_data():
@@ -21,7 +21,7 @@ def load_data():
             content = f.read().strip()
             if not content:
                 return {}
-            return json.loads(content)
+            return json.load(f)
     except:
         return {}
 
@@ -34,7 +34,6 @@ def save_data(data):
 # UI
 # -------------------------
 
-st.set_page_config(page_title="Magazzino", layout="wide")
 st.title("📦 Magazzino")
 
 data = load_data()
@@ -45,70 +44,26 @@ data = load_data()
 
 st.subheader("➕ Aggiungi / Aggiorna prodotto")
 
-col1, col2 = st.columns(2)
-
-with col1:
-    nome = st.text_input("Nome prodotto")
-
-with col2:
-    quantita = st.number_input("Quantità", min_value=0.0, step=1.0)
-
-# -------------------------
-# SALVATAGGIO
-# -------------------------
+nome = st.text_input("Nome prodotto")
+quantita = st.number_input("Quantità", min_value=0.0, step=1.0)
 
 if st.button("Salva"):
     if nome:
         nome = nome.lower().strip()
         data[nome] = quantita
         save_data(data)
+
         st.success("Salvato correttamente!")
         st.rerun()
 
 # -------------------------
-# VISUALIZZAZIONE (FIX HTML SICURO)
+# VISUALIZZAZIONE SEMPLICE (NO HTML)
 # -------------------------
 
 st.subheader("📊 Stock attuale")
 
 if data:
-    cols = st.columns(4)
-
-    for i, (prodotto, qta) in enumerate(data.items()):
-        with cols[i % 4]:
-
-            colore = "#16a34a" if float(qta) > 5 else "#dc2626"
-
-            html_card = f"""
-            <div style="
-                border-radius: 15px;
-                padding: 20px;
-                background-color: #1f2937;
-                text-align: center;
-                box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-                margin-bottom: 15px;
-            ">
-                <div style="
-                    font-size: 14px;
-                    color: #9ca3af;
-                    letter-spacing: 2px;
-                ">
-                    {prodotto.upper()}
-                </div>
-
-                <div style="
-                    font-size: 40px;
-                    font-weight: bold;
-                    color: {colore};
-                    margin-top: 10px;
-                ">
-                    {qta}
-                </div>
-            </div>
-            """
-
-            # 🔥 QUESTO È IL PUNTO CHIAVE
-            st.markdown(html_card, unsafe_allow_html=True)
-
+    for prodotto, qta in data.items():
+        st.write(f"{prodotto} → {qta}")
 else:
     st.info("Magazzino vuoto")
