@@ -5,7 +5,7 @@ import os
 FILE = "data/magazzino.json"
 
 # -------------------------
-# FUNZIONI
+# LOAD / SAVE SICURI
 # -------------------------
 
 def load_data():
@@ -21,7 +21,7 @@ def load_data():
             content = f.read().strip()
             if not content:
                 return {}
-            return json.load(f)
+            return json.loads(content)
     except:
         return {}
 
@@ -31,36 +31,54 @@ def save_data(data):
         json.dump(data, f, indent=4)
 
 # -------------------------
+# CARICA SEMPRE DAL FILE
+# -------------------------
+
+data = load_data()
+
+# -------------------------
 # UI
 # -------------------------
 
 st.title("📦 Magazzino")
 
-data = load_data()
+st.subheader("➕ Aggiungi prodotto")
+
+col1, col2 = st.columns(2)
+
+with col1:
+    nome = st.text_input("Nome prodotto")
+
+with col2:
+    quantita = st.number_input("Quantità", min_value=0.0, step=1.0)
 
 # -------------------------
-# INPUT
+# AGGIORNAMENTO FILE
 # -------------------------
 
-st.subheader("➕ Aggiungi / Aggiorna prodotto")
-
-nome = st.text_input("Nome prodotto")
-quantita = st.number_input("Quantità", min_value=0.0, step=1.0)
-
-if st.button("Salva"):
+if st.button("Aggiungi / Aggiorna"):
     if nome:
         nome = nome.lower().strip()
-        data[nome] = quantita
+
+        # se esiste lo somma, altrimenti crea
+        if nome in data:
+            data[nome] += quantita
+        else:
+            data[nome] = quantita
+
         save_data(data)
 
-        st.success("Salvato correttamente!")
+        st.success(f"{nome} aggiornato nel magazzino")
+
         st.rerun()
 
 # -------------------------
-# VISUALIZZAZIONE SEMPLICE (NO HTML)
+# VISUALIZZAZIONE
 # -------------------------
 
-st.subheader("📊 Stock attuale")
+st.subheader("📊 Stock attuale (da file JSON)")
+
+data = load_data()  # 🔥 ricarica sempre dal file
 
 if data:
     for prodotto, qta in data.items():
