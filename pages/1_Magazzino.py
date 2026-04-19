@@ -94,3 +94,9 @@ if data:
         st.write(f"{k} → {v}")
 else:
     st.warning("Magazzino vuoto")
+
+if st.button("TEST SCRITTURA"):
+    with open(FILE, "w") as f:
+        f.write('{"test": 123}')
+
+    st.success("Scritto file manualmente")
