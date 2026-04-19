@@ -99,4 +99,16 @@
             "mascarpone": 1
         }
     },
+    "ARANCINO AL RAGU": {
+        "ingredienti": {
+            "ragù": 1,
+            "riso_bianco": 1
+        }
+    },
+    "BRUSCHETTA": {
+        "ingredienti": {
+            "pane_di_lariano": 1,
+            "pomodoro": 1
+        }
+    }
 }
