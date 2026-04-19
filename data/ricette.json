@@ -36,5 +36,25 @@
             "vodka": 2,
             "ghiaccio": 1
         }
-    }
+    },
+    "BICCHIERE DI WHISKY": {
+        "ingredienti": {
+            "whisky": 2,
+            "ghiaccio": 1
+        }
+    },
+    "WHISKY SOUR": {
+        "ingredienti": {
+            "vhisky": 2,
+            "uovo": 1,
+            "ghiaccio": 1
+        }
+    },
+    "GOLEM": {
+        "ingredienti": {
+            "vodka": 2,
+            "limonata": 2,
+            "ghiaccio": 1
+        }
+    },
 }
