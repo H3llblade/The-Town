@@ -1,1 +1,23 @@
-{}
+{
+    "pasta_al_pomodoro": {
+        "ingredienti": {
+            "pasta": 100,
+            "pomodoro": 50,
+            "sale": 1
+        }
+    },
+    "panino": {
+        "ingredienti": {
+            "pane": 2,
+            "prosciutto": 1,
+            "formaggio": 1
+        }
+    },
+    "insalata": {
+        "ingredienti": {
+            "lattuga": 100,
+            "olio": 10,
+            "sale": 1
+        }
+    }
+}
