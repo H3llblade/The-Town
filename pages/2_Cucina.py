@@ -3,7 +3,7 @@ import json
 import os
 
 # -------------------------
-# PERCORSI
+# PATH
 # -------------------------
 
 BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -13,25 +13,35 @@ MAGAZZINO_FILE = os.path.join(DATA_DIR, "magazzino.json")
 RICETTE_FILE = os.path.join(DATA_DIR, "ricette.json")
 
 # -------------------------
-# LOAD DATA
+# LOAD JSON
 # -------------------------
 
 def load_json(file):
-    os.makedirs(DATA_DIR, exist_ok=True)
-
     if not os.path.exists(file):
-        with open(file, "w") as f:
-            json.dump({}, f)
         return {}
-
     with open(file, "r") as f:
-        content = f.read().strip()
-        if not content:
-            return {}
-        return json.loads(content)
+        return json.load(f)
 
 magazzino = load_json(MAGAZZINO_FILE)
 ricette = load_json(RICETTE_FILE)
+
+# -------------------------
+# CALCOLO PIATTI
+# -------------------------
+
+def calcola_piatti(ingredienti, magazzino):
+    risultati = []
+
+    for ing, qty_richiesta in ingredienti.items():
+
+        disponibili = magazzino.get(ing, 0)
+
+        if disponibili == 0:
+            return 0
+
+        risultati.append(disponibili // qty_richiesta)
+
+    return int(min(risultati)) if risultati else 0
 
 # -------------------------
 # UI
@@ -39,52 +49,40 @@ ricette = load_json(RICETTE_FILE)
 
 st.title("🍳 Cucina")
 
-st.subheader("📊 Piatti producibili")
+st.subheader("📊 Piatti producibili per categoria")
 
 # -------------------------
-# CALCOLO
-# -------------------------
-
-def calcola_massimo(ricetta_ingredienti, magazzino):
-    valori = []
-
-    for ing, qty_richiesta in ricetta_ingredienti.items():
-
-        if ing not in magazzino:
-            return 0  # ingrediente mancante → zero piatti
-
-        valori.append(magazzino[ing] // qty_richiesta)
-
-    return int(min(valori)) if valori else 0
-
-# -------------------------
-# MOSTRA RISULTATI
+# LOGICA
 # -------------------------
 
 if ricette:
 
-    for nome, info in ricette.items():
+    for categoria, lista_ricette in ricette.items():
 
-        ingredienti = info.get("ingredienti", {})
+        st.markdown(f"## 📂 {categoria}")
 
-        max_piatti = calcola_massimo(ingredienti, magazzino)
+        for nome, info in lista_ricette.items():
 
-        st.markdown(f"### 🍽️ {nome}")
+            ingredienti = info.get("ingredienti", {})
 
-        if max_piatti > 0:
-            st.success(f"Puoi cucinare: {max_piatti} piatti")
-        else:
-            st.error("Non puoi cucinare questa ricetta")
+            max_piatti = calcola_piatti(ingredienti, magazzino)
 
-        st.write("Ingredienti richiesti:")
+            st.markdown(f"### 🍽️ {nome}")
 
-        for ing, qty in ingredienti.items():
+            if max_piatti > 0:
+                st.success(f"Puoi cucinare: {max_piatti} piatti")
+            else:
+                st.error("Non puoi cucinare questa ricetta")
 
-            disponibili = magazzino.get(ing, 0)
+            st.write("Ingredienti:")
 
-            st.write(f"- {ing}: richiesti {qty} | disponibili {disponibili}")
+            for ing, qty in ingredienti.items():
 
-        st.markdown("---")
+                disponibili = magazzino.get(ing, 0)
+
+                st.write(f"- {ing}: richiesti {qty} | disponibili {disponibili}")
+
+            st.markdown("---")
 
 else:
     st.info("Nessuna ricetta disponibile")
